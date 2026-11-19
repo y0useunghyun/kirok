@@ -22,17 +22,29 @@
 </main>
 
 <form id="box" class="box" hidden>
+  <div class="row modes">
+    <button type="button" data-mode="text">적기</button>
+    <button type="button" data-mode="draw">그리기</button>
+    <label class="photo" data-mode="photo">사진 찍기<input id="camera" type="file" accept="image/*" capture="environment" hidden></label>
+    <label class="photo" data-mode="photo">앨범<input id="file" type="file" accept="image/*" hidden></label>
+  </div>
+
   <textarea id="text" maxlength="200" rows="2" placeholder="적기"></textarea>
+
   <div id="pad" class="pad" hidden>
     <canvas id="draw" aria-label="그리는 칸"></canvas>
     <button id="clear" type="button">지우기</button>
+    <div id="colors" class="colors" role="radiogroup" aria-label="색"></div>
   </div>
-  <img id="preview" class="preview" alt="올릴 사진" hidden>
+
+  <label id="sizer" class="sizer" hidden>
+    <span>크기</span>
+    <input id="size" type="range" min="5" max="40" value="14">
+    <span class="muted">끌어서 옮기기</span>
+  </label>
+
   <p id="msg" class="msg" role="alert"></p>
   <div class="row">
-    <button id="drawBtn" type="button">그리기</button>
-    <label class="photo">사진 찍기<input id="camera" type="file" accept="image/*" capture="environment" hidden></label>
-    <label class="photo">앨범<input id="file" type="file" accept="image/*" hidden></label>
     <span class="grow"></span>
     <button id="cancel" type="button">취소</button>
     <button id="send" type="submit" disabled>남기기</button>

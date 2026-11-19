@@ -8,7 +8,7 @@ create table if not exists public.entries (
   y real not null check (y between 0 and 1),
   text text check (char_length(text) <= 200),
   photo text check (photo is null or ((photo like 'data:image/jpeg;base64,%' or photo like 'data:image/png;base64,%') and char_length(photo) <= 600000)),
-  w real check (w is null or (w > 0 and w <= 1)), -- 그림 폭 (종이 폭 대비). 사진은 비움
+  w real check (w is null or (w > 0 and w <= 1)), -- 사진·그림 폭 (종이 폭 대비)
   created_at timestamptz not null default now(),
   check (text is not null or photo is not null)
 );

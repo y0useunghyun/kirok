@@ -1,0 +1,123 @@
+:root {
+  --page: #ffffff;
+  --sheet: #ffffff;
+  --ink: #161616;
+  --rule: #161616;
+  --edge: #161616;
+  --muted: #8a8a8a;
+  --mono: 'IBM Plex Mono', 'Noto Sans KR', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--mono);
+  -webkit-tap-highlight-color: transparent;
+  word-break: keep-all;
+}
+button, textarea, input { font: inherit; color: inherit; }
+button { background: none; border: 0; cursor: pointer; text-align: left; }
+button:disabled { opacity: .3; cursor: default; }
+a { color: inherit; text-decoration: none; }
+
+/* 한 장: A3 가로. 폰은 꽉 차게, 큰 화면은 높이에 맞춰 가운데 */
+.stage { display: flex; justify-content: center; }
+.paper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 420 / 297;
+  background: var(--sheet);
+  container-type: inline-size;
+  overflow: hidden;
+  cursor: crosshair;
+  border: 1px solid var(--edge);
+}
+/* 글씨 = 종이 폭 1% (A3 출력 시 약 4mm). 폰: 약 12px로 읽히게 종이를 키우고 옆으로 밀어서 본다 */
+@media (max-width: 639px) {
+  .stage { justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; }
+  .paper { flex: none; width: 1200px; }
+}
+@media (min-width: 640px) {
+  .stage { padding: 24px; }
+  .paper { width: min(100%, calc((100dvh - 48px) * 420 / 297)); }
+}
+
+/* 왼쪽 위 안내: 크기는 종이 너비 기준 */
+.intro {
+  position: absolute;
+  left: 2cqw; top: 2cqw;
+  width: max-content; /* 문장마다 한 줄, 중간에서 끊지 않음 */
+  z-index: 2;
+  font-size: 1cqw;
+  line-height: 1.55;
+  cursor: default;
+}
+.head {
+  display: flex; justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: .3cqw;
+  margin-bottom: .5cqw;
+}
+.about { white-space: pre; margin-bottom: .9cqw; }
+.list { list-style: none; border-top: 1px solid var(--rule); padding-top: .4cqw; }
+.list li { display: flex; justify-content: space-between; }
+.list button, .list a { padding: .1cqw 0; }
+.list button:not(:disabled):hover, .list a:hover { text-decoration: underline; }
+.hint { margin-top: .9cqw; color: var(--muted); }
+
+/* 남긴 것: 상자 없이 종이 위에 그대로 */
+.note {
+  position: absolute;
+  max-width: 16cqw;
+  transform: translate(-50%, -50%);
+  font-size: 1cqw;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.note img { display: block; width: 11cqw; height: auto; }
+.note img + figcaption { margin-top: .4cqw; }
+.spot {
+  position: absolute;
+  width: .8cqw; height: .8cqw;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 아래 입력 */
+.box {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  max-width: 480px; margin: 0 auto;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+  background: var(--page);
+  border-top: 1px solid var(--rule);
+  display: flex; flex-direction: column; gap: 10px;
+  font-size: 13px;
+  z-index: 3;
+}
+@media (min-width: 640px) { .box { border: 1px solid var(--rule); bottom: 24px; } }
+.box textarea {
+  width: 100%; resize: none;
+  border: 0; outline: 0; background: none;
+  font-size: 16px;
+}
+.pad { position: relative; }
+.pad canvas {
+  display: block; width: 100%; aspect-ratio: 3 / 2;
+  border: 1px solid var(--rule);
+  touch-action: none; cursor: crosshair;
+}
+.pad button { position: absolute; right: 8px; top: 6px; font-size: 12px; }
+#drawBtn.on { text-decoration: underline; }
+.preview { max-height: 120px; max-width: 50%; object-fit: contain; align-self: flex-start; }
+.msg { color: #c0392b; }
+.msg:empty { display: none; }
+.row { display: flex; align-items: center; gap: 16px; }
+.grow { flex: 1; }
+.photo { cursor: pointer; }
+.row button, .photo { min-height: 36px; display: inline-flex; align-items: center; }
+#send { border-bottom: 1px solid var(--ink); }

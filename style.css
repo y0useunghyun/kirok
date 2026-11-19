@@ -3,7 +3,6 @@
   --sheet: #ffffff;
   --ink: #161616;
   --rule: #161616;
-  --edge: #161616;
   --muted: #8a8a8a;
   --mono: 'IBM Plex Mono', 'Noto Sans KR', monospace;
 }
@@ -23,8 +22,7 @@ button { background: none; border: 0; cursor: pointer; text-align: left; }
 button:disabled { opacity: .3; cursor: default; }
 a { color: inherit; text-decoration: none; }
 
-/* 한 장: A3 가로. 폰은 꽉 차게, 큰 화면은 높이에 맞춰 가운데 */
-.stage { display: flex; justify-content: center; }
+/* 판: 테두리 없이 화면 폭을 꽉 채우는 공용 판. 모두가 같은 자리에 같은 걸 보도록 비율은 고정 */
 .paper {
   position: relative;
   width: 100%;
@@ -33,19 +31,14 @@ a { color: inherit; text-decoration: none; }
   container-type: inline-size;
   overflow: hidden;
   cursor: crosshair;
-  border: 1px solid var(--edge);
 }
-/* 글씨 = 종이 폭 1% (A3 출력 시 약 4mm). 폰: 약 12px로 읽히게 종이를 키우고 옆으로 밀어서 본다 */
+/* 글씨 = 판 폭 1%. 폰: 약 12px로 읽히게 판을 키우고 밀어서 둘러본다 */
 @media (max-width: 639px) {
-  .stage { justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; }
-  .paper { flex: none; width: 1200px; }
-}
-@media (min-width: 640px) {
-  .stage { padding: 24px; }
-  .paper { width: min(100%, calc((100dvh - 48px) * 420 / 297)); }
+  .stage { overflow-x: auto; overscroll-behavior-x: contain; }
+  .paper { width: 1200px; }
 }
 
-/* 왼쪽 위 안내: 크기는 종이 너비 기준 */
+/* 왼쪽 위 안내: 크기는 판 너비 기준 */
 .intro {
   position: absolute;
   left: 2cqw; top: 2cqw;
@@ -62,13 +55,9 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: .5cqw;
 }
 .about { white-space: pre; margin-bottom: .9cqw; }
-.list { list-style: none; border-top: 1px solid var(--rule); padding-top: .4cqw; }
-.list li { display: flex; justify-content: space-between; }
-.list button, .list a { padding: .1cqw 0; }
-.list button:not(:disabled):hover, .list a:hover { text-decoration: underline; }
 .hint { margin-top: .9cqw; color: var(--muted); }
 
-/* 남긴 것: 상자 없이 종이 위에 그대로 */
+/* 남긴 것: 상자 없이 판 위에 그대로 */
 .note {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -123,7 +112,7 @@ a { color: inherit; text-decoration: none; }
 .sizer { display: flex; align-items: center; gap: 12px; }
 .sizer input { flex: 1; accent-color: var(--ink); }
 .muted { color: var(--muted); }
-/* 종이 위에 놓인, 아직 안 남긴 사진 */
+/* 판 위에 놓인, 아직 안 남긴 사진 */
 .draft { outline: 1px dashed var(--ink); outline-offset: 2px; cursor: grab; touch-action: none; z-index: 1; }
 .draft img { pointer-events: none; }
 .msg { color: #c0392b; }

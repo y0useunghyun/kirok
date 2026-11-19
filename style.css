@@ -4,7 +4,7 @@
   --ink: #161616;
   --rule: #161616;
   --muted: #8a8a8a;
-  --mono: 'IBM Plex Mono', 'Noto Sans KR', monospace;
+  --mono: 'agahnsangsoo2012', 'IBM Plex Mono', 'Noto Sans KR', monospace; /* 안상수체 (Adobe Fonts), 못 불러오면 고정폭 */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

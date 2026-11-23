@@ -15,8 +15,9 @@
   // 지금 쓰고 있는 기록 하나
   let spot = null; // { x, y } 0~1, 종이 기준
   let mode = 'text'; // text | draw | photo
-  let photo = null; // data URL
-  let photoW = 0.14; // 사진 폭 (종이 폭 대비)
+  let photo = null; // 올릴 그림·사진 data URL
+  let photoW = 0.14; // 그림·사진 폭 (판 폭 대비)
+  let sizeTouched = false; // 크기 막대를 직접 움직였는지 (안 움직였으면 그림은 그린 크기 그대로)
   let drawn = null; // 그린 범위 { x0, y0, x1, y1 } (칸 기준 px)
   let drawing = false;
   let color = COLORS[0];
@@ -82,7 +83,7 @@
     return el;
   }
 
-  // 아직 안 남긴 사진: 종이 위에서 끌어 옮기고 크기를 바꾼다
+  // 아직 안 남긴 그림·사진: 판 위에서 끌어 옮기고 크기를 바꾼다
   const draft = document.createElement('figure');
   draft.className = 'note draft';
   const draftImg = new Image();
@@ -99,7 +100,7 @@
     const notes = entries.filter((e) => e.text || e.photo);
     $('paper').replaceChildren($('intro'), ...notes.map(noteNode));
     if (!spot) return;
-    if (mode === 'photo' && photo) {
+    if (mode !== 'text' && photo) {
       syncDraft();
       $('paper').append(draft);
       return;
@@ -138,6 +139,7 @@
 
   $('size').addEventListener('input', () => {
     photoW = Number($('size').value) / 100;
+    sizeTouched = true;
     if (spot) syncDraft();
   });
 
@@ -147,9 +149,10 @@
     mode = next;
     photo = mode === 'photo' ? photo : null;
     if (mode !== 'draw') drawn = null;
+    sizeTouched = false;
     $('text').hidden = mode !== 'text';
     $('pad').hidden = mode !== 'draw';
-    $('sizer').hidden = mode !== 'photo' || !photo;
+    $('sizer').hidden = mode === 'text' || !photo;
     document.querySelectorAll('.modes [data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === mode));
     if (mode === 'draw') resetPad();
     if (mode === 'text') $('text').focus();
@@ -171,12 +174,13 @@
     dragging = false;
     $('box').reset();
     photoW = Number($('size').value) / 100; // 크기 막대도 처음 값으로
+    sizeTouched = false;
     $('box').hidden = true;
     render();
   }
 
   function updateSend() {
-    const ready = { text: !!$('text').value.trim(), draw: !!drawn, photo: !!photo };
+    const ready = { text: !!$('text').value.trim(), draw: !!photo, photo: !!photo };
     $('send').disabled = !ready[mode];
   }
 
@@ -240,10 +244,35 @@
     ctx.stroke();
     drawn = grow(drawn, x, y);
   });
-  const stopDrawing = () => { drawing = false; };
-  pad.addEventListener('pointerup', stopDrawing);
-  pad.addEventListener('pointercancel', stopDrawing);
-  $('clear').addEventListener('click', resetPad);
+  // 한 획이 끝날 때마다 그림을 판 위에 미리 놓는다 → 끌어 옮기고 크기 조절
+  function finishStroke() {
+    if (!drawing) return;
+    drawing = false;
+    if (!drawn) return;
+    try {
+      const out = exportDrawing();
+      photo = out.photo;
+      draftImg.src = photo;
+      if (!sizeTouched) {
+        photoW = out.w;
+        $('size').value = String(Math.round(out.w * 100));
+      }
+      $('sizer').hidden = false;
+      $('msg').textContent = '';
+    } catch (err) {
+      $('msg').textContent = err.message;
+    }
+    updateSend();
+    render();
+  }
+  pad.addEventListener('pointerup', finishStroke);
+  pad.addEventListener('pointercancel', finishStroke);
+  $('clear').addEventListener('click', () => {
+    resetPad();
+    photo = null;
+    $('sizer').hidden = true;
+    render();
+  });
 
   // 그린 부분만 잘라 투명 PNG로
   function exportDrawing() {
@@ -299,8 +328,7 @@
   // ── 남기기 ────────────────────────────────────────
 
   function content() {
-    if (mode === 'draw') return { text: null, ...exportDrawing() };
-    if (mode === 'photo') return { text: null, photo, w: photoW };
+    if (mode !== 'text') return { text: null, photo, w: photoW };
     return { text: $('text').value.trim(), photo: null, w: null };
   }
 

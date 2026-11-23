@@ -85,6 +85,7 @@ a { color: inherit; text-decoration: none; }
 /* 오른쪽 아래 QR: 큰 화면에서만 (폰에선 자기 화면 QR을 찍을 일이 없음) */
 .qr { position: fixed; right: 24px; bottom: 24px; width: 140px; height: 140px; z-index: 2; }
 @media (max-width: 639px) { .qr { display: none !important; } }
+.big .qr { width: min(calc(100dvh - 48px), 62vw); height: auto; right: 4vw; bottom: 24px; }
 
 /* 아래 입력 */
 .box {

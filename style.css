@@ -55,6 +55,9 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: .5cqw;
 }
 .about { white-space: pre; margin-bottom: .9cqw; }
+.title { font: inherit; padding: 0; cursor: pointer; }
+.rooms { list-style: none; margin-bottom: .5cqw; }
+.rooms a:hover { text-decoration: underline; }
 .hint { margin-top: .9cqw; color: var(--muted); }
 
 /* 남긴 것: 상자 없이 판 위에 그대로 */

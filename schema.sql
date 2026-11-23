@@ -4,6 +4,7 @@
 -- ponytail: 행사 하루 규모라 Storage 버킷 없이 표에 바로 넣음. 사진이 수천 장이면 Storage로 옮길 것.
 create table if not exists public.entries (
   id text primary key check (char_length(id) <= 40),
+  room text not null default 'a' check (room in ('a', 'b')), -- A반 / B반
   x real not null check (x between 0 and 1),
   y real not null check (y between 0 and 1),
   text text check (char_length(text) <= 200),

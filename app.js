@@ -25,6 +25,26 @@
 
   $('about').textContent = CONFIG.about || '';
 
+  // 반마다 판이 따로: ?r=a → A반, ?r=b → B반 (반이 없으면 A반).
+  // 참여자에겐 반 표시가 안 보이고, 「기록 중!」을 누르면 반 전환 메뉴가 열린다 (주최자·교수님용)
+  const ROOMS = { a: 'A반', b: 'B반' };
+  const asked = new URLSearchParams(location.search).get('r');
+  const room = Object.hasOwn(ROOMS, asked) ? asked : 'a';
+  for (const [key, name] of Object.entries(ROOMS)) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = `?r=${key}`;
+    a.textContent = key === room ? `${name} ●` : name;
+    if (key === room) a.setAttribute('aria-current', 'page');
+    li.append(a);
+    $('rooms').append(li);
+  }
+  $('title').addEventListener('click', () => {
+    const open = $('rooms').hidden;
+    $('rooms').hidden = !open;
+    $('title').setAttribute('aria-expanded', String(open));
+  });
+
   // ── 종이 ──────────────────────────────────────────
 
   function addEntry(e) {
@@ -285,7 +305,7 @@
     if (!spot || $('send').disabled) return;
     $('send').disabled = true;
     try {
-      const row = await store.add({ id: newId(), x: spot.x, y: spot.y, ...content() });
+      const row = await store.add({ id: newId(), room, x: spot.x, y: spot.y, ...content() });
       closeBox();
       addEntry(row);
     } catch (err) {
@@ -295,8 +315,8 @@
     }
   });
 
-  store.subscribe(addEntry);
-  store.list()
+  store.subscribe(room, addEntry);
+  store.list(room)
     .then((rows) => {
       const fresh = rows.filter((e) => !ids.has(e.id));
       fresh.forEach((e) => ids.add(e.id));

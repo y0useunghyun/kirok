@@ -34,7 +34,7 @@
     const li = document.createElement('li');
     const a = document.createElement('a');
     a.href = `?r=${key}`;
-    a.textContent = key === room ? `${name} ●` : name;
+    a.textContent = name;
     if (key === room) a.setAttribute('aria-current', 'page');
     li.append(a);
     $('rooms').append(li);

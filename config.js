@@ -4,5 +4,5 @@
 globalThis.RECORD_CONFIG = {
   supabaseUrl: 'https://moyujxduykmtvxjzexvy.supabase.co',
   supabaseKey: 'sb_publishable_rZiIJYlKfHgohTgNeNciiA_aioE9Pq8',
-  about: '기록하는 것에 매력을 느껴서 만들었습니다.\n무엇이든, 어떤 방식이든 괜찮습니다.\n원하는 곳에 남겨주세요!',
+  about: '기록하는 것에 매력을 느껴서 만들었습니다.\n무엇이든, 어떤 방식이든 괜찮습니다.\n원하는 곳에 기록을 남겨주세요!',
 };

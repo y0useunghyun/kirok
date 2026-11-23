@@ -39,6 +39,10 @@
     li.append(a);
     $('rooms').append(li);
   }
+  // 화면 오른쪽 아래: 이 반 판으로 들어오는 QR (띄워 놓은 화면에서 바로 찍게)
+  $('qr').src = `qr-${room}.svg`;
+  $('qr').hidden = false;
+
   $('title').addEventListener('click', () => {
     const open = $('rooms').hidden;
     $('rooms').hidden = !open;

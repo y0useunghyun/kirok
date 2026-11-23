@@ -90,10 +90,10 @@ a { color: inherit; text-decoration: none; }
   background: var(--page);
   border-top: 1px solid var(--rule);
   display: flex; flex-direction: column; gap: 12px;
-  font-size: 18px; /* 안상수체는 같은 크기에서 작아 보여서 크게 */
+  font-size: 22px; /* 안상수체는 같은 크기에서 작아 보여서 크게 */
   z-index: 3;
 }
-@media (min-width: 640px) { .box { border: 1px solid var(--rule); bottom: 24px; max-width: 600px; font-size: 20px; } }
+@media (min-width: 640px) { .box { border: 1px solid var(--rule); bottom: 24px; max-width: 680px; font-size: 26px; } }
 .box textarea {
   width: 100%; resize: none;
   border: 0; outline: 0; background: none;
@@ -109,7 +109,7 @@ a { color: inherit; text-decoration: none; }
 .modes .on { text-decoration: underline; text-underline-offset: 4px; }
 .colors { display: flex; gap: 12px; margin-top: 12px; }
 .colors button {
-  width: 30px; height: 30px; border-radius: 50%;
+  width: 34px; height: 34px; border-radius: 50%;
   background: var(--c); border: 2px solid var(--page);
   outline: 1px solid transparent;
 }
@@ -125,5 +125,5 @@ a { color: inherit; text-decoration: none; }
 .row { display: flex; align-items: center; gap: 20px; }
 .grow { flex: 1; }
 .photo { cursor: pointer; }
-.row button, .photo { min-height: 44px; display: inline-flex; align-items: center; }
+.row button, .photo { min-height: 48px; display: inline-flex; align-items: center; }
 #send { border-bottom: 1px solid var(--ink); }

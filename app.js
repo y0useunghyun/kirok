@@ -37,6 +37,11 @@
     a.href = `?r=${key}`;
     a.textContent = name;
     if (key === room) a.setAttribute('aria-current', 'page');
+    // 반을 바꿀 땐 매번 새 주소로 → 브라우저가 저장해 둔 옛 화면을 띄우지 않게
+    a.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      location.href = `?r=${key}&t=${Date.now()}`;
+    });
     li.append(a);
     $('rooms').append(li);
   }

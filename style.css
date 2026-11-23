@@ -86,6 +86,7 @@ a { color: inherit; text-decoration: none; }
 .qr { position: fixed; right: 24px; bottom: 24px; width: 140px; height: 140px; z-index: 2; }
 @media (max-width: 639px) { .qr { display: none !important; } }
 .big .qr { width: min(calc(100dvh - 48px), 62vw); height: auto; right: 4vw; bottom: 24px; }
+.big .intro { font-size: 2.8cqw; left: 3cqw; top: 3cqw; } /* 캡처용: 왼쪽 위 글도 크게 */
 
 /* 아래 입력 */
 .box {

@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=Noto+Sans+KR:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=32">
+<link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
 <main class="stage">
@@ -30,6 +30,9 @@
 
 <div id="track" class="track" aria-hidden="true"><span id="thumb"></span></div>
 
+<input id="camera" class="file-input" type="file" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
+<input id="file" class="file-input" type="file" accept="image/*" tabindex="-1" aria-hidden="true">
+
 <form id="box" class="box" hidden>
   <div class="row modes">
     <button type="button" class="kw" data-mode="text">글</button>
@@ -37,8 +40,6 @@
     <button type="button" class="kw" data-pick="camera">사진</button>
     <button type="button" class="kw" data-pick="file">앨범</button>
   </div>
-  <input id="camera" type="file" accept="image/*" capture="environment" hidden>
-  <input id="file" type="file" accept="image/*" hidden>
 
   <textarea id="text" maxlength="200" rows="2" placeholder="적기"></textarea>
 
@@ -63,9 +64,9 @@
 </form>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
-<script src="config.js?v=32"></script>
-<script src="core.js?v=32"></script>
-<script src="store.js?v=32"></script>
-<script src="app.js?v=32"></script>
+<script src="config.js?v=33"></script>
+<script src="core.js?v=33"></script>
+<script src="store.js?v=33"></script>
+<script src="app.js?v=33"></script>
 </body>
 </html>

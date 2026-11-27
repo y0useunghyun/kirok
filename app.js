@@ -1,5 +1,5 @@
 (function () {
-  const { fitWithin, clamp01, grow, crop } = RecordCore;
+  const { fitWithin, clamp01, grow, crop, stamp } = RecordCore;
   const store = RecordStore;
   const CONFIG = globalThis.RECORD_CONFIG || {};
   const PHOTO_MAX = 1000;
@@ -24,32 +24,12 @@
 
   const newId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
-  $('about').textContent = CONFIG.about || '';
-
-  // 반마다 판이 따로: ?r=a → A반, ?r=b → B반 (반이 없으면 A반).
-  // 참여자에겐 반 표시가 안 보이고, 「기록 중!」을 누르면 반 전환 메뉴가 열린다 (주최자·교수님용)
-  const ROOMS = { a: 'A반', b: 'B반' };
-  const asked = new URLSearchParams(location.search).get('r');
-  const room = Object.hasOwn(ROOMS, asked) ? asked : 'a';
-  for (const [key, name] of Object.entries(ROOMS)) {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = `?r=${key}`;
-    a.textContent = name;
-    if (key === room) a.setAttribute('aria-current', 'page');
-    // 반을 바꿀 땐 매번 새 주소로 → 브라우저가 저장해 둔 옛 화면을 띄우지 않게
-    a.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      location.href = `?r=${key}&t=${Date.now()}`;
-    });
-    li.append(a);
-    $('rooms').append(li);
-  }
-  $('title').addEventListener('click', () => {
-    const open = $('rooms').hidden;
-    $('rooms').hidden = !open;
-    $('title').setAttribute('aria-expanded', String(open));
-  });
+  $('quote').textContent = CONFIG.quote || '';
+  $('cite').textContent = CONFIG.cite || '';
+  // A반·B반은 하나로 합침 (2026-11-27). 어느 주소로 와도 같은 판, 새 기록은 room 'b'로 저장
+  const ROOM = 'b';
+  const TIME_TAP = CONFIG.timeStyle === 'tap';
+  document.body.classList.toggle('time-always', !TIME_TAP);
 
   // ── 종이 ──────────────────────────────────────────
 
@@ -80,6 +60,19 @@
       const cap = document.createElement('figcaption');
       cap.textContent = e.text;
       el.append(cap);
+    }
+    if (e.created_at) {
+      const t = document.createElement('time');
+      t.className = 'when';
+      t.dateTime = e.created_at;
+      t.textContent = stamp(new Date(e.created_at));
+      el.append(t);
+    }
+    if (TIME_TAP) {
+      el.addEventListener('click', (ev) => {
+        ev.stopPropagation(); // 판 클릭(새 기록)으로 번지지 않게
+        el.classList.toggle('show-time');
+      });
     }
     return el;
   }
@@ -154,7 +147,7 @@
     $('text').hidden = mode !== 'text';
     $('pad').hidden = mode !== 'draw';
     $('sizer').hidden = mode === 'text' || !photo;
-    document.querySelectorAll('.modes [data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === mode));
+    document.querySelectorAll('.kw').forEach((b) => b.classList.toggle('on', (b.dataset.mode || 'photo') === mode));
     if (mode === 'draw') resetPad();
     if (mode === 'text') $('text').focus();
     $('msg').textContent = '';
@@ -185,8 +178,21 @@
     $('send').disabled = !ready[mode];
   }
 
-  document.querySelectorAll('.modes button[data-mode]').forEach((b) => {
-    b.addEventListener('click', () => setMode(b.dataset.mode));
+  // 문장 속 「글·그림·사진·앨범」 = 버튼. 자리를 아직 안 골랐으면 지금 보이는 화면 가운데에 놓는다
+  function viewCenter() {
+    const r = $('paper').getBoundingClientRect();
+    return { x: clamp01((innerWidth / 2 - r.left) / r.width), y: clamp01((innerHeight * 0.4 - r.top) / r.height) };
+  }
+  document.querySelectorAll('.kw').forEach((b) => {
+    b.addEventListener('click', () => {
+      if (b.dataset.pick) {
+        $(b.dataset.pick).click(); // 사진 찍기·앨범: 고른 뒤에 상자가 열린다
+        return;
+      }
+      if (!spot) spot = viewCenter();
+      $('box').hidden = false;
+      setMode(b.dataset.mode);
+    });
   });
   $('text').addEventListener('input', updateSend);
   $('cancel').addEventListener('click', closeBox);
@@ -313,6 +319,8 @@
     const file = input.files[0];
     input.value = '';
     if (!file) return;
+    if (!spot) spot = viewCenter();
+    $('box').hidden = false;
     try {
       photo = await shrink(file);
       draftImg.src = photo;
@@ -338,7 +346,7 @@
     if (!spot || $('send').disabled) return;
     $('send').disabled = true;
     try {
-      const row = await store.add({ id: newId(), room, x: spot.x, y: spot.y, ...content() });
+      const row = await store.add({ id: newId(), room: ROOM, x: spot.x, y: spot.y, ...content() });
       closeBox();
       addEntry(row);
     } catch (err) {
@@ -348,8 +356,8 @@
     }
   });
 
-  store.subscribe(room, addEntry);
-  store.list(room)
+  store.subscribe(addEntry);
+  store.list()
     .then((rows) => {
       const fresh = rows.filter((e) => !ids.has(e.id));
       fresh.forEach((e) => ids.add(e.id));

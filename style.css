@@ -42,7 +42,7 @@ a { color: inherit; text-decoration: none; }
 .intro {
   position: absolute;
   left: 2cqw; top: 2cqw;
-  width: max-content; /* 문장마다 한 줄, 중간에서 끊지 않음 */
+  width: 24cqw;
   z-index: 2;
   font-size: 1.3cqw; /* 보는 사람 고려해 남긴 글(1cqw)보다 조금 크게 */
   line-height: 1.55;
@@ -54,12 +54,12 @@ a { color: inherit; text-decoration: none; }
   padding-bottom: .3cqw;
   margin-bottom: .5cqw;
 }
-.about { white-space: pre; margin-bottom: .9cqw; }
-.title { font: inherit; padding: 0; cursor: pointer; }
-.body { position: relative; }
-/* 반 전환 메뉴: 소개글 블록 오른쪽에 뜬다 (아래로 밀지 않음) */
-.rooms { list-style: none; position: absolute; left: calc(100% + 2cqw); top: 0; white-space: nowrap; }
-.rooms a:hover, .rooms a[aria-current] { text-decoration: underline; text-underline-offset: .25em; } /* 지금 반 = 밑줄 (글자 폭이 안 변하게) */
+.quote p { margin-bottom: .3cqw; }
+.quote cite { display: block; font-style: normal; color: var(--muted); margin-bottom: 1cqw; }
+.actions { margin-bottom: .9cqw; }
+/* 문장 속 단어 버튼: 밑줄로 누를 수 있다는 걸 알린다 */
+.kw { font: inherit; padding: 0; text-decoration: underline; text-decoration-thickness: .08em; text-underline-offset: .22em; cursor: pointer; }
+.kw:hover, .kw.on { text-decoration-thickness: .16em; }
 .hint { margin-top: .9cqw; color: var(--muted); }
 
 /* 남긴 것: 상자 없이 판 위에 그대로 */
@@ -73,6 +73,8 @@ a { color: inherit; text-decoration: none; }
 }
 .note img { display: block; width: 11cqw; height: auto; }
 .note figcaption { max-width: 16cqw; } /* 폭 제한은 글에만, 사진·그림은 고른 크기 그대로 */
+.when { display: none; margin-top: .3cqw; font-size: .75em; color: var(--muted); }
+.time-always .when, .note.show-time .when { display: block; }
 .note img + figcaption { margin-top: .4cqw; }
 .spot {
   position: absolute;
@@ -106,7 +108,6 @@ a { color: inherit; text-decoration: none; }
   touch-action: none; cursor: crosshair;
 }
 #clear { position: absolute; right: 10px; top: 6px; font-size: .8em; }
-.modes .on { text-decoration: underline; text-underline-offset: 4px; }
 .colors { display: flex; gap: 12px; margin-top: 12px; }
 .colors button {
   width: 34px; height: 34px; border-radius: 50%;

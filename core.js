@@ -22,7 +22,13 @@
     return { x, y, w: Math.min(w, b.x1 + pad) - x, h: Math.min(h, b.y1 + pad) - y };
   }
 
-  const api = { fitWithin, clamp01, grow, crop };
+  // 기록 시각 → 「11.27 14:02」
+  function stamp(date) {
+    const p = (n) => String(n).padStart(2, '0');
+    return `${p(date.getMonth() + 1)}.${p(date.getDate())} ${p(date.getHours())}:${p(date.getMinutes())}`;
+  }
+
+  const api = { fitWithin, clamp01, grow, crop, stamp };
   if (typeof module !== 'undefined') module.exports = api;
   else root.RecordCore = api;
 })(globalThis);

@@ -18,8 +18,8 @@
 
   const local = {
     online: false,
-    async list(room) {
-      return readLocal().filter((e) => e.room === room);
+    async list() {
+      return readLocal();
     },
     async add(entry) {
       const row = { ...entry, created_at: new Date().toISOString() };
@@ -31,16 +31,16 @@
       bc?.postMessage(row);
       return row;
     },
-    subscribe(room, cb) {
-      bc?.addEventListener('message', (ev) => ev.data.room === room && cb(ev.data));
+    subscribe(cb) {
+      bc?.addEventListener('message', (ev) => cb(ev.data));
     },
   };
 
-  // ponytail: 한 반의 기록을 한 번에 불러옴. 수천 개가 넘으면 나눠 불러올 것.
+  // ponytail: 모든 기록을 한 번에 불러옴. 수천 개가 넘으면 나눠 불러올 것.
   const remote = {
     online: true,
-    async list(room) {
-      const { data, error } = await client.from('entries').select('*').eq('room', room).order('created_at');
+    async list() {
+      const { data, error } = await client.from('entries').select('*').order('created_at');
       if (error) throw error;
       return data;
     },
@@ -49,10 +49,10 @@
       if (error) throw error;
       return data;
     },
-    subscribe(room, cb) {
+    subscribe(cb) {
       client
-        .channel(`entries:${room}`)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'entries', filter: `room=eq.${room}` }, (p) => cb(p.new))
+        .channel('entries')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'entries' }, (p) => cb(p.new))
         .subscribe();
     },
   };

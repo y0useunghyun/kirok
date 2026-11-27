@@ -103,17 +103,26 @@
     return el;
   }
 
-  // 아직 안 남긴 그림·사진: 판 위에서 끌어 옮기고 크기를 바꾼다
+  // 아직 안 남긴 기록(글·그림·사진): 판 위에 미리 보이고, 끌어서 옮긴다. 그림·사진은 크기도 바꾼다
   const draft = document.createElement('figure');
   draft.className = 'note draft';
   const draftImg = new Image();
-  draftImg.alt = '올릴 사진';
-  draft.append(draftImg);
+  draftImg.alt = '올릴 그림·사진';
+  const draftCap = document.createElement('figcaption');
+  draft.append(draftImg, draftCap);
+
+  const draftText = () => (mode === 'text' ? $('text').value.trim() : '');
+  const hasDraft = () => (mode === 'text' ? !!draftText() : !!photo);
 
   function syncDraft() {
+    const isText = mode === 'text';
+    draftImg.hidden = isText;
+    draftCap.hidden = !isText;
+    draftCap.textContent = draftText();
     draftImg.style.width = `${photoW * 100}cqw`;
     place(draft, spot.x, spot.y);
     if (draft.isConnected) nudge(draft);
+    $('dragHint').hidden = false;
   }
 
   function render() {
@@ -122,8 +131,9 @@
     const nodes = notes.map(noteNode);
     $('paper').replaceChildren($('intro'), ...nodes);
     nodes.forEach(nudge);
+    $('dragHint').hidden = true;
     if (!spot) return;
-    if (mode !== 'text' && photo) {
+    if (!$('box').hidden && hasDraft()) {
       $('paper').append(draft);
       syncDraft();
       return;
@@ -208,10 +218,14 @@
     $('send').disabled = !ready[mode];
   }
 
-  // 문장 속 「글·그림·사진·앨범」 = 버튼. 자리를 아직 안 골랐으면 지금 보이는 화면 가운데에 놓는다
+  // 문장 속 「글·그림·사진·앨범」 = 버튼. 자리를 아직 안 골랐으면 지금 보이는 화면 가운데 근처에 놓는다
+  // (조금씩 흩어서, 바로 남겨도 한 점에 쌓이지 않게. 놓인 뒤 끌어서 옮기면 된다)
+  const SCATTER = 0.3; // 화면 폭·높이의 30% 범위 안에서
   function viewCenter() {
     const r = $('paper').getBoundingClientRect();
-    return { x: clamp01((innerWidth / 2 - r.left) / r.width), y: clamp01((innerHeight * 0.4 - r.top) / r.height) };
+    const px = innerWidth * (0.5 + (Math.random() - 0.5) * SCATTER);
+    const py = innerHeight * (0.4 + (Math.random() - 0.5) * SCATTER);
+    return { x: clamp01((px - r.left) / r.width), y: clamp01((py - r.top) / r.height) };
   }
   document.querySelectorAll('.kw').forEach((b) => {
     b.addEventListener('click', () => {
@@ -224,7 +238,11 @@
       setMode(b.dataset.mode);
     });
   });
-  $('text').addEventListener('input', updateSend);
+  $('text').addEventListener('input', () => {
+    updateSend();
+    if (draft.isConnected && hasDraft()) syncDraft(); // 적는 대로 판 위 미리보기도 바뀐다
+    else render();
+  });
   $('cancel').addEventListener('click', closeBox);
 
   // ── 그리기 ────────────────────────────────────────

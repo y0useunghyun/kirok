@@ -131,7 +131,8 @@ a { color: inherit; text-decoration: none; }
 .muted { color: var(--muted); }
 /* 판 위에 놓인, 아직 안 남긴 사진 */
 .draft { outline: 1px dashed var(--ink); outline-offset: 2px; cursor: grab; touch-action: none; z-index: 1; }
-.draft img { pointer-events: none; }
+.draft img, .draft figcaption { pointer-events: none; }
+.hint-drag { font-size: .8em; }
 .msg { color: #c0392b; }
 .msg:empty { display: none; }
 .row { display: flex; align-items: center; gap: 20px; }

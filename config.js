@@ -5,7 +5,7 @@
 globalThis.RECORD_CONFIG = {
   supabaseUrl: 'https://moyujxduykmtvxjzexvy.supabase.co',
   supabaseKey: 'sb_publishable_rZiIJYlKfHgohTgNeNciiA_aioE9Pq8',
-  quote: '「쓰기: 무언가를 꼼꼼히 붙잡아 두려 애쓰는 것, 무언가를 살아남게 하는 것.」',
+  quote: '「쓰기: 무언가를 꼼꼼히 붙잡아 두려 애쓰는 것,\n무언가를 살아남게 하는 것.」',
   cite: '조르주 페렉, 『공간의 종류들』',
   timeStyle: 'always',
 };

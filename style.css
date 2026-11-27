@@ -54,7 +54,7 @@ a { color: inherit; text-decoration: none; }
 }
 .quote { margin-bottom: 1cqw; }
 #quote { white-space: pre-line; }
-.quote cite { display: block; font-style: normal; color: var(--muted); }
+.quote cite { display: block; font-style: normal; }
 /* 소개 블록 자리에 놓인 기록은 블록 바로 밑에 위쪽을 맞춰 보여 준다 */
 .note.below { transform: translateX(-50%); }
 .actions { margin-bottom: .9cqw; }

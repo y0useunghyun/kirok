@@ -92,7 +92,9 @@ a { color: inherit; text-decoration: none; }
     display: block; position: fixed; z-index: 2;
     left: 16px; right: 16px; bottom: calc(env(safe-area-inset-bottom) + 10px);
     height: 4px; border-radius: 2px; background: #e6e6e6; pointer-events: none;
+    opacity: 0; transition: opacity .4s;
   }
+  .track.on { opacity: 1; }
   #thumb { position: absolute; top: 0; height: 100%; border-radius: 2px; background: var(--ink); }
 }
 

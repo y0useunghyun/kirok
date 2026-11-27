@@ -421,9 +421,19 @@
     $('thumb').style.width = `${(stage.clientWidth / total) * 100}%`;
     $('thumb').style.left = `${(stage.scrollLeft / total) * 100}%`;
   }
-  stage.addEventListener('scroll', syncTrack, { passive: true });
+  // 밀고 있을 때만 보이고, 가만히 있으면 사라진다 (아래쪽 구석의 기록을 가리지 않게)
+  const TRACK_IDLE = 1500; // 멈춘 뒤 사라질 때까지(ms)
+  const TRACK_FIRST = 3000; // 처음 들어왔을 때 보여 주는 시간(ms)
+  let trackTimer = 0;
+  function showTrack(ms) {
+    $('track').classList.add('on');
+    clearTimeout(trackTimer);
+    trackTimer = setTimeout(() => $('track').classList.remove('on'), ms);
+  }
+  stage.addEventListener('scroll', () => { syncTrack(); showTrack(TRACK_IDLE); }, { passive: true });
   addEventListener('resize', syncTrack);
   syncTrack();
+  showTrack(TRACK_FIRST);
 
   // 글꼴(안상수체)이 늦게 내려오거나 화면 폭이 바뀌면 소개 블록 크기가 달라진다 → 기록 위치 다시 계산
   new ResizeObserver(() => render()).observe($('intro'));

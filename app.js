@@ -61,6 +61,16 @@
     el.classList.toggle('below', at.below); // 위쪽을 맞춰서 블록과 안 겹치게
   }
 
+  // 기준점은 블록 밖이어도 글·사진이 퍼지면서 블록에 걸치면 블록 밑으로 내린다 (판에 붙인 뒤에 잰다)
+  function nudge(el) {
+    const p = $('paper').getBoundingClientRect();
+    const ir = $('intro').getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    if (!p.height || r.top >= ir.bottom || r.left >= ir.right) return;
+    el.style.top = `${((ir.bottom - p.top) / p.height + BELOW_GAP) * 100}%`;
+    el.classList.add('below');
+  }
+
   function noteNode(e) {
     const el = document.createElement('figure');
     el.className = 'note';
@@ -101,24 +111,28 @@
   draft.append(draftImg);
 
   function syncDraft() {
-    place(draft, spot.x, spot.y);
     draftImg.style.width = `${photoW * 100}cqw`;
+    place(draft, spot.x, spot.y);
+    if (draft.isConnected) nudge(draft);
   }
 
   function render() {
     // 모두 한 장에 겹쳐 쌓인다 (나중 것이 위)
     const notes = entries.filter((e) => e.text || e.photo);
-    $('paper').replaceChildren($('intro'), ...notes.map(noteNode));
+    const nodes = notes.map(noteNode);
+    $('paper').replaceChildren($('intro'), ...nodes);
+    nodes.forEach(nudge);
     if (!spot) return;
     if (mode !== 'text' && photo) {
-      syncDraft();
       $('paper').append(draft);
+      syncDraft();
       return;
     }
     const dot = document.createElement('span');
     dot.className = 'spot';
     place(dot, spot.x, spot.y);
     $('paper').append(dot);
+    nudge(dot);
   }
 
   function paperPoint(ev) {

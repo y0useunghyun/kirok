@@ -44,6 +44,9 @@ a { color: inherit; text-decoration: none; }
   left: 2cqw; top: 2cqw;
   width: 24cqw;
   z-index: 2;
+  background: var(--sheet); /* 아래로 들어간 기록이 글자와 겹쳐 보이지 않게 */
+  padding: 0 1.2cqw 1cqw 0;
+  box-sizing: content-box;
   font-size: 1.3cqw; /* 보는 사람 고려해 남긴 글(1cqw)보다 조금 크게 */
   line-height: 1.55;
   cursor: default;
@@ -82,6 +85,17 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--ink);
   border-radius: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* 폰: 판이 옆으로 더 있다는 걸 알려 주는 얇은 위치 막대 (사파리 주소창이 가로 스크롤 막대를 가려서) */
+.track { display: none; }
+@media (max-width: 639px) {
+  .track {
+    display: block; position: fixed; z-index: 2;
+    left: 16px; right: 16px; bottom: calc(env(safe-area-inset-bottom) + 10px);
+    height: 4px; border-radius: 2px; background: #e6e6e6; pointer-events: none;
+  }
+  #thumb { position: absolute; top: 0; height: 100%; border-radius: 2px; background: var(--ink); }
 }
 
 /* 아래 입력 */

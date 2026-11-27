@@ -356,6 +356,18 @@
     }
   });
 
+  // 폰 위치 막대: 지금 보이는 폭 / 판 전체 폭
+  const stage = document.querySelector('.stage');
+  function syncTrack() {
+    const total = stage.scrollWidth;
+    if (!total) return;
+    $('thumb').style.width = `${(stage.clientWidth / total) * 100}%`;
+    $('thumb').style.left = `${(stage.scrollLeft / total) * 100}%`;
+  }
+  stage.addEventListener('scroll', syncTrack, { passive: true });
+  addEventListener('resize', syncTrack);
+  syncTrack();
+
   store.subscribe(addEntry);
   store.list()
     .then((rows) => {

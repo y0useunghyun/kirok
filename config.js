@@ -5,7 +5,7 @@
 globalThis.RECORD_CONFIG = {
   supabaseUrl: 'https://moyujxduykmtvxjzexvy.supabase.co',
   supabaseKey: 'sb_publishable_rZiIJYlKfHgohTgNeNciiA_aioE9Pq8',
-  quote: '“미래에 무엇을 그리워할지 모르기 때문에 몽땅 저장하는 게 최선이라는 식이다.”',
-  cite: '그래프턴 태너, 『포에버리즘』',
+  quote: '「쓰기: 무언가를 꼼꼼히 붙잡아 두려 애쓰는 것, 무언가를 살아남게 하는 것.」',
+  cite: '조르주 페렉, 『공간의 종류들』',
   timeStyle: 'always',
 };

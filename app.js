@@ -40,9 +40,25 @@
     render();
   }
 
+  // 소개 블록이 차지하는 자리 (판 비율 0~1). 그 안에 놓인 기록은 블록 바로 밑으로 내려 보여 준다
+  const BELOW_GAP = 0.012;
+  function introBox() {
+    const p = $('paper').getBoundingClientRect();
+    const r = $('intro').getBoundingClientRect();
+    if (!p.width) return { right: 0, bottom: 0 };
+    return { right: (r.right - p.left) / p.width, bottom: (r.bottom - p.top) / p.height };
+  }
+  function avoidIntro(x, y) {
+    const box = introBox();
+    const inside = x < box.right && y < box.bottom;
+    return inside ? { x, y: box.bottom + BELOW_GAP, below: true } : { x, y, below: false };
+  }
+
   function place(el, x, y) {
-    el.style.left = `${x * 100}%`;
-    el.style.top = `${y * 100}%`;
+    const at = avoidIntro(x, y);
+    el.style.left = `${at.x * 100}%`;
+    el.style.top = `${at.y * 100}%`;
+    el.classList.toggle('below', at.below); // 위쪽을 맞춰서 블록과 안 겹치게
   }
 
   function noteNode(e) {
@@ -346,7 +362,8 @@
     if (!spot || $('send').disabled) return;
     $('send').disabled = true;
     try {
-      const row = await store.add({ id: newId(), room: ROOM, x: spot.x, y: spot.y, ...content() });
+      const at = avoidIntro(spot.x, spot.y);
+      const row = await store.add({ id: newId(), room: ROOM, x: at.x, y: at.y, ...content() });
       closeBox();
       addEntry(row);
     } catch (err) {

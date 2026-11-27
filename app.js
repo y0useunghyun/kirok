@@ -185,6 +185,7 @@
   // ── 아래 상자 ─────────────────────────────────────
 
   function setMode(next) {
+    stopCam();
     mode = next;
     photo = mode === 'photo' ? photo : null;
     if (mode !== 'draw') drawn = null;
@@ -208,6 +209,7 @@
   }
 
   function closeBox() {
+    stopCam();
     spot = null;
     photo = null;
     drawn = null;
@@ -237,6 +239,10 @@
   }
   document.querySelectorAll('.kw').forEach((b) => {
     b.addEventListener('click', () => {
+      if (b.dataset.pick === 'camera' && USE_WEBCAM) {
+        openCam();
+        return;
+      }
       if (b.dataset.pick) {
         $(b.dataset.pick).click(); // 사진 찍기·앨범: 고른 뒤에 상자가 열린다
         return;
@@ -350,6 +356,61 @@
 
   // ── 사진 ──────────────────────────────────────────
 
+  function toJpeg(source, w, h) {
+    const canvas = Object.assign(document.createElement('canvas'), { width: w, height: h });
+    canvas.getContext('2d').drawImage(source, 0, 0, w, h);
+    for (const q of [0.8, 0.6, 0.4]) {
+      const data = canvas.toDataURL('image/jpeg', q);
+      if (data.length <= PHOTO_LIMIT) return data;
+    }
+    throw new Error('사진이 너무 커요');
+  }
+
+  // 컴퓨터: 파일 입력의 capture가 무시되니 웹캠 화면을 상자 안에 띄워 찍는다. 폰은 기본 카메라
+  const USE_WEBCAM = matchMedia('(pointer: fine)').matches && !!navigator.mediaDevices?.getUserMedia;
+  let camStream = null;
+
+  function stopCam() {
+    camStream?.getTracks().forEach((t) => t.stop());
+    camStream = null;
+    $('camVideo').srcObject = null;
+    $('cam').hidden = true;
+  }
+
+  async function openCam() {
+    if (!spot) spot = viewCenter();
+    $('box').hidden = false;
+    setMode('photo');
+    $('cam').hidden = false;
+    try {
+      camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      $('camVideo').srcObject = camStream;
+      await $('camVideo').play();
+    } catch (err) {
+      console.error(err);
+      stopCam();
+      $('msg').textContent = '카메라를 열 수 없어요. 앨범에서 골라 주세요';
+    }
+  }
+
+  $('shoot').addEventListener('click', () => {
+    const v = $('camVideo');
+    if (!v.videoWidth) {
+      $('msg').textContent = '카메라가 켜지는 중이에요. 잠시 뒤 다시 눌러 주세요';
+      return;
+    }
+    try {
+      const { w, h } = fitWithin(v.videoWidth, v.videoHeight, PHOTO_MAX);
+      const shot = toJpeg(v, w, h);
+      stopCam();
+      photo = shot;
+      draftImg.src = photo;
+      setMode('photo');
+    } catch (err) {
+      $('msg').textContent = err.message;
+    }
+  });
+
   async function shrink(file) {
     const url = URL.createObjectURL(file);
     try {
@@ -357,13 +418,7 @@
       img.src = url;
       await img.decode();
       const { w, h } = fitWithin(img.naturalWidth, img.naturalHeight, PHOTO_MAX);
-      const canvas = Object.assign(document.createElement('canvas'), { width: w, height: h });
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      for (const q of [0.8, 0.6, 0.4]) {
-        const data = canvas.toDataURL('image/jpeg', q);
-        if (data.length <= PHOTO_LIMIT) return data;
-      }
-      throw new Error('사진이 너무 커요');
+      return toJpeg(img, w, h);
     } finally {
       URL.revokeObjectURL(url);
     }

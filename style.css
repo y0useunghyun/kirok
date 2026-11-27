@@ -76,7 +76,7 @@ a { color: inherit; text-decoration: none; }
 }
 .note img { display: block; width: 11cqw; height: auto; }
 .note figcaption { max-width: 16cqw; } /* 폭 제한은 글에만, 사진·그림은 고른 크기 그대로 */
-.when { display: none; margin-top: .3cqw; }
+.when { display: none; margin-top: .3cqw; font-size: .8em; }
 .time-always .when, .note.show-time .when { display: block; }
 .note img + figcaption { margin-top: .4cqw; }
 .spot {

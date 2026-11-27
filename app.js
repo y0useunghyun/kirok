@@ -16,8 +16,13 @@
   let spot = null; // { x, y } 0~1, 종이 기준
   let mode = 'text'; // text | draw | photo
   let photo = null; // 올릴 그림·사진 data URL
-  let photoW = 0.14; // 그림·사진 폭 (판 폭 대비)
-  let sizeTouched = false; // 크기 막대를 직접 움직였는지 (안 움직였으면 그림은 그린 크기 그대로)
+  // 그림·사진 폭 (판 폭 대비) = 기본 폭 × 배율. 크기 막대 가운데 = 지금 크기(1배), 양옆으로 1/4배~4배
+  const PHOTO_BASE = 0.14; // 사진 기본 폭
+  const SCALE_SPAN = 25; // 막대 25칸마다 2배
+  let baseW = PHOTO_BASE; // 그림은 그린 크기 그대로가 기본
+  let scale = 1;
+  let photoW = baseW;
+  const applySize = () => { photoW = Math.min(1, Math.max(0.01, baseW * scale)); };
   let drawn = null; // 그린 범위 { x0, y0, x1, y1 } (칸 기준 px)
   let drawing = false;
   let color = COLORS[0];
@@ -172,8 +177,8 @@
   draft.addEventListener('pointercancel', stopDrag);
 
   $('size').addEventListener('input', () => {
-    photoW = Number($('size').value) / 100;
-    sizeTouched = true;
+    scale = 2 ** ((Number($('size').value) - 50) / SCALE_SPAN);
+    applySize();
     if (spot) syncDraft();
   });
 
@@ -183,7 +188,9 @@
     mode = next;
     photo = mode === 'photo' ? photo : null;
     if (mode !== 'draw') drawn = null;
-    sizeTouched = false;
+    scale = 1;
+    $('size').value = '50';
+    applySize();
     $('text').hidden = mode !== 'text';
     $('pad').hidden = mode !== 'draw';
     $('sizer').hidden = mode === 'text' || !photo;
@@ -207,8 +214,9 @@
     drawing = false;
     dragging = false;
     $('box').reset();
-    photoW = Number($('size').value) / 100; // 크기 막대도 처음 값으로
-    sizeTouched = false;
+    scale = 1; // 크기 막대도 가운데로 (box.reset이 값을 50으로 되돌린다)
+    baseW = PHOTO_BASE;
+    applySize();
     $('box').hidden = true;
     render();
   }
@@ -308,10 +316,8 @@
       const out = exportDrawing();
       photo = out.photo;
       draftImg.src = photo;
-      if (!sizeTouched) {
-        photoW = out.w;
-        $('size').value = String(Math.round(out.w * 100));
-      }
+      baseW = out.w; // 그린 크기가 기본, 막대로 정한 배율은 그대로
+      applySize();
       $('sizer').hidden = false;
       $('msg').textContent = '';
     } catch (err) {
@@ -369,6 +375,8 @@
     if (!file) return;
     if (!spot) spot = viewCenter();
     $('box').hidden = false;
+    baseW = PHOTO_BASE;
+    applySize();
     try {
       photo = await shrink(file);
       draftImg.src = photo;

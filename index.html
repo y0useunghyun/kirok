@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=Noto+Sans+KR:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=26">
+<link rel="stylesheet" href="style.css?v=27">
 </head>
 <body>
 <main class="stage">
@@ -44,7 +44,7 @@
 
   <label id="sizer" class="sizer" hidden>
     <span>크기</span>
-    <input id="size" type="range" min="5" max="40" value="14">
+    <input id="size" type="range" min="0" max="100" value="50" aria-label="크기 (가운데 = 지금 크기)">
   </label>
 
   <p id="dragHint" class="muted hint-drag" hidden>기록을 원하는 곳에 움직여 배치해주세요</p>
@@ -57,9 +57,9 @@
 </form>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
-<script src="config.js?v=26"></script>
-<script src="core.js?v=26"></script>
-<script src="store.js?v=26"></script>
-<script src="app.js?v=26"></script>
+<script src="config.js?v=27"></script>
+<script src="core.js?v=27"></script>
+<script src="store.js?v=27"></script>
+<script src="app.js?v=27"></script>
 </body>
 </html>

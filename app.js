@@ -385,6 +385,9 @@
   addEventListener('resize', syncTrack);
   syncTrack();
 
+  // 글꼴(안상수체)이 늦게 내려오거나 화면 폭이 바뀌면 소개 블록 크기가 달라진다 → 기록 위치 다시 계산
+  new ResizeObserver(() => render()).observe($('intro'));
+
   store.subscribe(addEntry);
   store.list()
     .then((rows) => {
